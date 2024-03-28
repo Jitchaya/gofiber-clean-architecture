@@ -36,6 +36,7 @@ func main() {
 	redis := configuration.NewRedis(config)
 
 	//repository
+	bmiRepository := repository.NewBMIRepositoryImpl(database)
 	productRepository := repository.NewProductRepositoryImpl(database)
 	transactionRepository := repository.NewTransactionRepositoryImpl(database)
 	transactionDetailRepository := repository.NewTransactionDetailRepositoryImpl(database)
@@ -45,6 +46,7 @@ func main() {
 	httpBinRestClient := restclient.NewHttpBinRestClient()
 
 	//service
+	bmiService := service.NewBMIServiceImpl(&bmiRepository, redis)
 	productService := service.NewProductServiceImpl(&productRepository, redis)
 	transactionService := service.NewTransactionServiceImpl(&transactionRepository)
 	transactionDetailService := service.NewTransactionDetailServiceImpl(&transactionDetailRepository)
@@ -52,6 +54,7 @@ func main() {
 	httpBinService := service.NewHttpBinServiceImpl(&httpBinRestClient)
 
 	//controller
+	bmiController := controller.NewBMIController(&bmiService, config)
 	productController := controller.NewProductController(&productService, config)
 	transactionController := controller.NewTransactionController(&transactionService, config)
 	transactionDetailController := controller.NewTransactionDetailController(&transactionDetailService, config)
@@ -64,6 +67,7 @@ func main() {
 	app.Use(cors.New())
 
 	//routing
+	bmiController.Route(app)
 	productController.Route(app)
 	transactionController.Route(app)
 	transactionDetailController.Route(app)
